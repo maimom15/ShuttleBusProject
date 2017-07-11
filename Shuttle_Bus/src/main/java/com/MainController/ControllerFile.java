@@ -85,12 +85,7 @@ public class ControllerFile {
 		return url;
 	}
 	
-	@RequestMapping(value="/admin",method = RequestMethod.GET)
-	public ModelAndView Admin(){
-		ModelAndView view =new ModelAndView("admin");
-		
-		return view;
-	}
+	
 	
 	@RequestMapping(value="/device",method = RequestMethod.GET)
 	public ModelAndView Device( HttpServletRequest request){
