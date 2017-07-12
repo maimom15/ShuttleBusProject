@@ -1,7 +1,10 @@
 package com.MainController;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +22,9 @@ import com.DaoClasses.TeacherDao;
 import com.DaoClasses.Teacher_Implement;
 import com.EntityClasses.Authentic;
 import com.EntityClasses.Destination_Master;
+import com.EntityClasses.Passenger;
+import com.EntityClasses.Schedule_Table;
+import com.EntityClasses.User_Master;
 import com.ModelClasses.Teacher;
 import com.ServiceClasses.usersService;
 
@@ -47,13 +53,10 @@ public class ControllerFile {
 	@RequestMapping(value="/teacher", method = RequestMethod.GET)
 	public ModelAndView getTeacher(){
 		ModelAndView view =new ModelAndView("teacher");
-		return view;
-		
-	}
+		return view;	
+	}	
 	
-	
-
-	@RequestMapping(value="/login_service",method = RequestMethod.POST)
+	@RequestMapping(value="/login_service",method = RequestMethod.GET)
 	public @ResponseBody String Login_service(@RequestBody Authentic aut){
 		String email = aut.getEmail();
 		String password = aut.getPassword();
@@ -86,7 +89,71 @@ public class ControllerFile {
 	}
 	
 	
+	@RequestMapping(value="/userInfo",method = RequestMethod.GET)
+	public @ResponseBody List<Map> getUserInfo(){
+		List<User_Master> user = new ArrayList<User_Master>();
+		List<Map> userReturn = new ArrayList<Map>();
+		Teacher_Implement sl= new Teacher_Implement();
+		user=sl.getUserInfo();
+		for(int i=0;i<user.size();i++){
+        	Map<String,Object> users = new HashMap<String,Object>();
+        	users.put("fullname", user.get(i).getFullname());
+        	users.put("username", user.get(i).getUsername());
+        	users.put("no_of_ticket", user.get(i).getNo_of_ticket());
+        	userReturn.add(users);
+        }
+		return userReturn;
+	}
 	
+	
+	@RequestMapping(value="/selectService",method = RequestMethod.GET)
+	public @ResponseBody List<Map> select_service(){
+		List<Destination_Master> dest = new ArrayList<Destination_Master>();
+		List<Map> destReturn = new ArrayList<Map>();
+		Teacher_Implement sl= new Teacher_Implement();
+		dest=sl.getDestinationId();
+		for(int i=0;i<dest.size();i++){
+        	Map<String,Object> dests = new HashMap<String,Object>();
+        	dests.put("destination_name", dest.get(i).getDestination_name());
+        	dests.put("destination_id", dest.get(i).getDestination_id());
+        	destReturn.add(dests);
+        }
+		System.out.println(destReturn);
+		return destReturn;
+	}
+	
+
+	@RequestMapping(value="/scheduleData",method = RequestMethod.GET)
+	public @ResponseBody List<Schedule_Table> getscheduleData(){
+		List<Schedule_Table> schedule = new ArrayList<Schedule_Table>();
+		Teacher_Implement sl= new Teacher_Implement();
+		System.out.println("user info");
+		schedule=sl.getSchdule();
+		return schedule;
+	}
+	
+
+	@RequestMapping(value="/passengerDetail",method = RequestMethod.GET)
+	public @ResponseBody List<Passenger> getpassengerDetail(){
+			List<Passenger> passen = new ArrayList<Passenger>();
+			Teacher_Implement sl= new Teacher_Implement();
+			System.out.println("user info");
+			passen=sl.getPassenger();
+			return passen;
+		}
+		
+	
+	@RequestMapping(value="/bookingService",method = RequestMethod.POST)
+	public @ResponseBody String getBooking(@RequestBody Teacher book[]){
+			Teacher_Implement sl= new Teacher_Implement();
+			System.out.println(book[0].getDate_of_booking());
+			//sl.BookService(book[0]);
+			return "success";
+	}
+	
+	
+	
+	/*
 	@RequestMapping(value="/device",method = RequestMethod.GET)
 	public ModelAndView Device( HttpServletRequest request){
 			ModelAndView view =new ModelAndView("device");
@@ -97,27 +164,16 @@ public class ControllerFile {
 		  }
 		return view;
 	}
-	
-	
 	@RequestMapping(value="/driver",method = RequestMethod.GET)
 	public ModelAndView Driver(){
 		ModelAndView view =new ModelAndView("driver");
 		view.addObject("name", "world");
 		return view;
+	}*/
+	public static void main(String args[]){
+		
 	}
 	
-	@RequestMapping(value="/booking")
-	public ModelAndView Booking(){
-			int i=0;
-		ModelAndView view = new ModelAndView("teacher");
-		
-		Teacher_Implement dest = new Teacher_Implement();
-		Set <Teacher> teacher = new HashSet<Teacher>();
-			dest.addBooking(teacher);
-			
-			
-		return view;
-	}
 	
 	
 }

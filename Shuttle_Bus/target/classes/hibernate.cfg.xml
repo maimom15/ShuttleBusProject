@@ -10,7 +10,7 @@
    <!-- Assume test is the database name -->
    <property name="hibernate.connection.url">jdbc:mysql://localhost/shuttle_bus</property>
    <property name="hibernate.connection.username">root</property>
-   <property name="hibernate.connection.password">12345</property>
+   <property name="hibernate.connection.password">root</property>
         <!--  <property name="current_session_context_class">thread</property> -->
    <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         
