@@ -11,6 +11,16 @@ public class Passenger {
 	private Bus_Per_Schedule bus_per_schedule_id;
 	
 	
+	public Passenger(){
+		
+	}
+	
+	public Passenger(String date_of_booking,User_Master user_id,Destination_Master destination_id,String date_of_travel){
+		this.date_of_booking=date_of_booking;
+		this.user_id=user_id;
+		this.destination_id=destination_id;
+		this.date_of_travel=date_of_travel;
+	}
 	
 	
 	public int getId() {
