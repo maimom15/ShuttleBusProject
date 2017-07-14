@@ -74,13 +74,14 @@ public class Teacher_Implement {
             String hql ="FROM Schedule_Table as e where e.date_of_travel< current_date()";
             Query query =  session.createQuery(hql);
             sche = query.list();
-            System.out.println(sche.get(0).getDate_of_travel());
+            System.out.println(sche.get(0).getDestination_id().getDestination_id());
      	}catch (RuntimeException e) {
             if (trns != null) {
                 trns.rollback();
             }
             e.printStackTrace();
      	}
+     	System.out.println("Schedule3");
         return sche;
 	}
 		
