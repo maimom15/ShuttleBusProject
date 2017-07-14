@@ -146,7 +146,7 @@
 		        <div class="col s12 l3 custom_input">
 			   		<div id="getSelectTo" class="input-field s6">      
 				      <select id="test" class="validate">
-				        <option value="" disabled selected>To</option>
+				        <option value="" disabled selected>Return</option>
 				      </select>
 				    </div>
 			   	</div>
@@ -276,11 +276,10 @@
 	
 	$(document).ready(function() {
 		var date_of_travel=[];
-		var checkDate=true;
-		var to=null;
+		var checkDate=true,selectRound=null;
+		var back=null;
 		var from=null;
 		var itera_date_travel=2;
-
 
 		 $('.dropdown-icon, .dropdown-user-info').dropdown({
 		      inDuration: 300,
@@ -304,7 +303,6 @@
 	    
 	    
 	    //user_info//not yet
-  		 var userInfoForm="";  
   		 $.ajax({
 				type : "GET",
 				contentType : "application/json",
@@ -312,6 +310,7 @@
 				timeout : 100000,
 				success : function(data) {
 					//console.log(data);
+					var userInfoForm="";
 					userInfoForm+='<li><a href="#!">'+data.username
 								+'</a></li><li class="divider"></li><li><a href="#!">'+
 								data.user_id+'</a></li><li class="divider"></li><li><a href="#!">No.Ticket:&nbsp &nbsp'+
@@ -325,11 +324,33 @@
 					console.log("DONE");
 				}
 			});
-   		 
+  		 
+  		//handle date select
+		 $('#roundWay').change(function(){
+		 	checkDate=true;
+		 	selectRound=true;
+		 	itera_date_travel=2;
+		 	optionSelect(checkDate);
+			$(".flatpickr input").flatpickr({
+				mode: "range",
+				minDate: "today",
+				dateFormat: "d-m-Y"
+			});
+		 })
+		 $('#oneWay').change(function(){
+		 	checkDate=false;
+		 	itera_date_travel=1;
+		 	optionSelect(checkDate);
+		    $(".flatpickr input").flatpickr({
+				mode: "single",
+				minDate: "today",
+				dateFormat: "d-m-Y"
+			});
+		 })
 
 		//select form
-   		 var destination="";  //user in select
-   		 $.ajax({
+		var destination="";  //user in select
+		$.ajax({
 				type : "GET",
 				async:false,
 				cache:false,
@@ -339,60 +360,83 @@
 				success : function(data) {
 					destination=data;
 					var select='<select id="fromDes" class="validate"><option disabled selected>From</option>'
-					for(i=0;i<data.length;i++){
-						select +='<option value="'+data[i].destination_id+'">'+data[i].destination_name+'</option>';								
-						};
-						select+='</select>';
-						document.getElementById("getSelectFrom").innerHTML = select;						
-						$('#fromDes').material_select();
-				},
-				error : function(e) {
-					console.log("ERROR: ", e);
-				},
-				done : function(e) {
-					console.log("DONE");
-				}
-			});
+					for(i=0;i<destination.length;i++){
+						select +='<option value="'+destination[i].destination_id+'">'+destination[i].destination_name+'</option>';								
+					};
+					select+='</select>';
+					document.getElementById("getSelectFrom").innerHTML = select;						
+					$('#fromDes').material_select();
+					},
+					error : function(e) {
+						console.log("ERROR: ", e);
+					},
+					done : function(e) {
+						console.log("DONE");
+					}
+		});
+   		
+   		 function optionSelect(checkDate){
+			if(checkDate){
+				var backForm='<select class="validate"><option disabled selected>Return</option></select>';
+				document.getElementById("getSelectTo").innerHTML = backForm;						
+				$('#toDes').material_select();
+			}else{
+				var backForm='<div disabled></div>';
+				document.getElementById("getSelectTo").innerHTML = backForm;						
+			}
+					
+				
+   		 }
    		 
    		//handle event select destinaton
    		 $('#fromDes').change(function(){
 			var dateSelected = $("#fromDes").val();
-			var toDesForm='<select id="toDes" class="validate">';
-			for(i=0;i<destination.length;i++){
-				if(destination[i].destination_id!=dateSelected){
-					toDesForm +='<option value="'+destination[i].destination_id+'">'+destination[i].destination_name+'</option>';
-					to=destination[i].destination_id;  //two option only
+			if(checkDate){
+				var toDesForm='<select id="toDes" class="validate"><option disabled selected>Return</option>';
+				for(i=0;i<destination.length;i++){
+					if(destination[i].destination_id!=dateSelected){
+						toDesForm +='<option value="'+destination[i].destination_id+'">'+destination[i].destination_name+'</option>';
+					}
+					else{
+						from=destination[i].destination_id;
+						console.log("from :"+from);
+					}
 				}
-				else{
-					from=destination[i].destination_id;
-				}
+				toDesForm+='</select>';
+				document.getElementById("getSelectTo").innerHTML = toDesForm;
+				$('#toDes').material_select();
 			}
-			toDesForm+='</select>';
-			document.getElementById("getSelectTo").innerHTML = toDesForm;
-			$('#toDes').material_select();
 		 });
+//Continue here   		
+   		$('#toDes').change(function(){
+			var back = $("#toDes").val();
+			console.log("back :"+back);			
+		 });
+   		
+   		
    		 
-   		 
-   	    //schedule data//nottype : "POST",
+   	    //schedule data
    		$.ajax({
    			type : "POST",
    			contentType : "application/json",
    			url : "scheduleData",
    			timeout : 100000,
    			success : function(data) {
-   				    console.log(data+"KK");
-   				    var scheduleForm=null;
-	   				for(i=0;i<data.length();i++){	
-		   				scheduleForm+='<tr><td>'+data.date_of_travel
-		   								+'</td><td>'+data.destination_id
-		   								+'</td><td>'+data.total_available_seats
-		   								+'</td><td>'+data.customer_seats
-		   								+'</td><td>'+data.staff_seats
-		   								+'</td><td>'+data.student_seats
-		   								+'</td><td>'+data.remaining_seats
-		   								+'</td><td><a href="#" id="'+data.schedule_id
+   				    console.log(data[0].destination_name);
+   				    var scheduleForm="";
+	   				for(i=0;i<data.length;i++){	
+	   					console.log("Hello1");
+		   				scheduleForm+='<tr><td>'+data[i].date_of_travel
+		   								+'</td><td>'+data[i].destination_name
+		   								+'</td><td>'+data[i].total_available_seats
+		   								+'</td><td>'+data[i].customer_seats
+		   								+'</td><td>'+data[i].staff_seats
+		   								+'</td><td>'+data[i].student_seats
+		   								+'</td><td>'+data[i].remaining_seats
+		   								+'</td><td><a href="#" id="'+data[i].schedule_id
 		   						        +'">detail</a></td></tr>';	
 	   					}
+	   					console.log("Hello2");
 	   					document.getElementById('getSchedule').innerHTML=scheduleForm;
    			},
    			error : function(e) {
@@ -406,11 +450,11 @@
    		
    	   //Passenger Detail//not yet
    		$.ajax({
-   					type : "POST",
-   					contentType : "application/json",
-   					url : "passengerDetail",
-   					timeout : 100000,
-   					success : function(data) {
+   				type : "POST",
+   				contentType : "application/json",
+   				url : "passengerDetail",
+   				timeout : 100000,
+   				success : function(data) {
   						for(i=0;i<data.length();i++){
 		   					scheduleForm+='<tr><td>'+data.no
 		   								+'</td><td>'+data.userId
@@ -433,25 +477,7 @@
    		 	
 
 			
-		 //handle date select
-		 $('#roundWay').change(function(){
-		 	checkDate=true;
-		 	itera_date_travel=2;
-			$(".flatpickr input").flatpickr({
-				mode: "range",
-				minDate: "today",
-				dateFormat: "d-m-Y"
-			});
-		 })
-		 $('#oneWay').change(function(){
-		 	checkDate=false;
-		 	itera_date_travel=1;
-		    $(".flatpickr input").flatpickr({
-				mode: "single",
-				minDate: "today",
-				dateFormat: "d-m-Y"
-			});
-		 })
+		 
    		 $('#check_in_date').change(function(){      
 			if(checkDate){
 				date_of_travel = $('#check_in_date').val().split('to');
@@ -465,20 +491,17 @@
 			
 		 //Booking Select
 		 $('#book_now').click(function(){
-			 if(to!=null&&from!=null&&date_of_travel.length!=0){
+			 if(back!=null&&from!=null&&date_of_travel.length!=0){
 			 var date_of_booking =new Date($.now());
-			 var destination_id=[to,from];
+			 var destination_id=[back,from];
 			 submit = [];
 	      	 for(var i=0;i<itera_date_travel;i++){	 
 	      		submit[i]={"destination_id":destination_id[i],
 	      				"date_of_travel":date_of_travel[i],
 	      				"date_of_booking":""+date_of_booking};
 	      		}
-	      	 console.log(submit);
-			 }else{
-				 alert("Unvalid Data!");
-			 }
-	      	$.ajax({
+	      	    console.log(submit);
+	      	  $.ajax({
 					type : "POST",
 					url : "booking",
 					contentType : "application/json",
@@ -495,7 +518,13 @@
 					done : function(e) {
 						console.log("DONE");
 					}
-				});		 
+				});
+			 
+			 }
+			    else{
+				 alert("Unvalid Data!");
+			 }
+	      			 
 		 });
 	});
 

@@ -3,23 +3,15 @@ package com.MainController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.DaoClasses.TeacherDao;
 import com.DaoClasses.Teacher_Implement;
 import com.EntityClasses.Authentic;
 import com.EntityClasses.Destination_Master;
@@ -130,12 +122,12 @@ public class ControllerFile {
 		System.out.println("Schedule1");
 		List<Schedule_Table> schedule = new ArrayList<Schedule_Table>();
 		Teacher_Implement sl= new Teacher_Implement();
-		schedule = sl.getSchdule();
-		System.out.println(schedule);
+		schedule = sl.getSchdule(); 
 		for(int i=0;i<schedule.size();i++){
         	Map<String,Object> sch = new HashMap<String,Object>();
         	sch.put("date_of_travel",schedule.get(i).getDate_of_travel());
-        	sch.put("destination_id",schedule.get(i).getDestination_id() );
+        	sch.put("destination_id",schedule.get(i).getDestination_id().getDestination_id());
+        	sch.put("destination_name",schedule.get(i).getDestination_id().getDestination_name());
         	sch.put("total_available_seats",schedule.get(i).getTotal_available_seats());
         	sch.put("customer_seats",schedule.get(i).getCustomer_seats());
         	sch.put("staff_seats",schedule.get(i).getStaff_seats());
@@ -145,6 +137,7 @@ public class ControllerFile {
         	scheReturn.add(sch);
         }
 		System.out.println(scheReturn);
+		System.out.println("Hello");
 		return scheReturn;
 	}
 	
