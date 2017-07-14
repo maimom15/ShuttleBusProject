@@ -6,7 +6,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Insert title here</title>
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<!-- Compiled and minified CSS -->
 	 
 	
@@ -20,6 +20,17 @@
 	<spring:url value="/resources/js/admin.js" var="adminjs" />
 	<link href="${admincss}" rel="stylesheet" />
 	<script src ="${adminjs}" type="text/javascript"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		 $('ul .tabs').tabs();
+		    $('.modal').modal();
+		    $(".button-collapse").sideNav();
+		    $('#modal2').modal();
+		    $('select').material_select();
+		    $('#modal3').modal();
+	});
+	
+	</script>
 </head>
 <body>
 <nav class="nav-extended">
@@ -27,7 +38,7 @@
 		<div class="nav-wrapper">
       <div class="row nav_row">
 			<div class="col s12 m6">
-				 <a href="#" class="brand-logo">Logo</a>
+				 <a href="#" class="brand-logo" id='click'>Logo</a>
 
 			</div>
 			
@@ -74,35 +85,8 @@
           </tr>
         </thead>
 
-        <tbody>
-          <tr>
-            <td>Fri,09/june/2017</td>
-            <td>12</td>
-            <td>K to P</td>
-            <td class="detail" ><a class="modal-trigger" href="#modal1">Detail</a></td>
-            <td class="set_schedule"><a class="modal-trigger" href="#modal2">Set</a></td>
-          </tr>
-          <tr>
-           <td>Fri,09/june/2017</td>
-            <td>12</td>
-            <td>K to P</td>
-            <td class="detail" ><a class="modal-trigger" href="#modal1">Detail</a></td>
-            <td class="set_schedule"><a class="modal-trigger" href="#modal2">Set</a></td>
-          </tr>
-          <tr>
-            <td>Fri,09/june/2017</td>
-            <td>12</td>
-            <td>K to P</td>
-            <td class="detail"><a class="modal-trigger" href="#modal1">Detail</a></td>
-            <td class="set_schedule"><a class="modal-trigger" href="#modal2">Set</a></td>
-          </tr>
-          <tr>
-            <td>Fri,09/june/2017</td>
-            <td>12</td>
-            <td>K to P</td>
-            <td class="detail"><a class="modal-trigger" href="#modal1">Detail</a></td>
-            <td class="set_schedule"><a class="modal-trigger" href="#modal2">Set</a></td>
-          </tr>
+        <tbody id="getschedule">
+          
         </tbody>
       </table>
   		</div>
@@ -113,42 +97,15 @@
         <thead>
           <tr>
               <th>Name</th>
-              <th>Item Name</th>
-              <th>Item Price</th>
+              <th>Batch</th>
+              <th>Role</th>
+              <th>Email</th>
+              <th>Phone</th>
           </tr>
         </thead>
 
-        <tbody>
-          <tr>
-            <td>Alvin</td>
-            <td>Eclair</td>
-            <td>$0.87</td>
-          </tr>
-          <tr>
-            <td>Alan</td>
-            <td>Jellybean</td>
-            <td>$3.76</td>
-          </tr>
-          <tr>
-            <td>Jonathan</td>
-            <td>Lollipop</td>
-            <td>$7.00</td>
-          </tr>
-          <tr>
-            <td>Alvin</td>
-            <td>Eclair</td>
-            <td>$0.87</td>
-          </tr>
-          <tr>
-            <td>Alan</td>
-            <td>Jellybean</td>
-            <td>$3.76</td>
-          </tr>
-          <tr>
-            <td>Jonathan</td>
-            <td>Lollipop</td>
-            <td>$7.00</td>
-          </tr>
+        <tbody id="detail_pass">
+          
         </tbody>
       </table>
     </div>
@@ -373,7 +330,7 @@
           </tr>
         </thead>
 
-        <tbody>
+        <tbody id="schedule">
           <tr>
             <td>B 01</td>
             <td>24</td>
@@ -382,22 +339,7 @@
             <td>5-A34L</td>
             <td><a href="#">Edit</a> / <a href="#">Delete</a></td>
           </tr>
-          <tr>
-            <td>B 01</td>
-            <td>24</td>
-            <td>01</td>
-            <td>Student</td>
-            <td>5-A34L</td>
-            <td><a href="#">Edit</a> / <a href="#">Delete</a></td>
-          </tr>
-          <tr>
-            <td>B 01</td>
-            <td>24</td>
-            <td>01</td>
-            <td>Student</td>
-            <td>5-A34L</td>
-            <td><a href="#">Edit</a> / <a href="#">Delete</a></td>
-          </tr>
+          
         </tbody>
       </table>
   		</div>
@@ -680,4 +622,162 @@
           </div>
         </footer>        
 </body>
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	
+	var row={"phnom_penh":[],"Kirirom":[]};
+	
+	var student_k=0;
+	var student_p=0;
+	var staff;
+	var customer;
+	var key;
+	
+	var full=[[],[],[],[]];
+	var generneted={"date":[],"destination":[],"data":[]};
+		console.log("click");
+		
+		 $.ajax({
+			 	async:false,
+			 	cache:false,
+				type : "GET",
+				contentType : "application/json",
+				url : "schedule",
+				
+				
+				timeout : 100000,
+				success : function(data) {
+					var p=0;
+					var k=0;
+					console.log(data);
+					for(var i=0;i<data.length;i++){
+						key=Object.keys(data[i])[0];
+						
+						for(var j=0;j<data[i][key].length;j++){
+							
+						if(data[i][key][j]['destination']=="phnom penh"){
+							if(data[i][key][j]['role']=="student"){
+								student_p++;
+								
+							}
+						
+							row["phnom_penh"][p]={"full_name":data[i][key][j]['full_name']
+							,"email":data[i][key][j]['email']
+							,"phone":data[i][key][j]['phone']
+							,"role":data[i][key][j]['role']
+							,"batch":data[i][key][j]['batch']}
+							
+							p++;
+							console.log(p);
+						}
+						
+						else if(data[i][key][j]['destination']=="Kirirom"){
+							
+							if(data[i][key][j]['role']=="student"){
+								student_k++;
+								
+								
+							}
+							
+							console.log(k);
+							row["Kirirom"][k]={"full_name":data[i][key][j]['full_name']
+							,"email":data[i][key][j]['email']
+							,"phone":data[i][key][j]['phone']
+							,"role":data[i][key][j]['role']
+							,"batch":data[i][key][j]['batch']}
+							
+							k++;
+							
+						}
+						
+						}
+						if(k){
+							full[i].push({"date":key,"destination":"Kirirom","student":student_k,"pass":row["Kirirom"]});
+							k=0;
+							student_k=0;
+							row["Kirirom"]=[];
+						}
+						if(p){
+							
+							full[i].push({"date":key,"destination":"Phnom Penh","student":student_p,"pass":row["phnom_penh"]});
+							p=0
+							student_p=0;
+							row["phnom_penh"]=[];
+						}
+						
+					}
+					
+					console.log(full);
+					var tr='<tr>';
+					var td ='';
+					for(var k=0;k<full.length;k++){
+						for(var l=0;l<full[k].length;l++){
+							
+							td = "<td>" + full[k][l]["date"] + "</td>" 
+							+ "<td>" + full[k][l]["student"] + "</td>"
+							+ "<td>" + full[k][l]["destination"] + "</td>"
+							+ '<td class="detail" value="'+full[k][l]["date"]+'->' +full[k][l]["destination"]+ '"> <a class="modal-trigger" href="#modal1">Detail</a></td>'
+							+ '<td class="set_schedule"><a class="modal-trigger" href="#modal2">Set</a></td>';
+							tr = tr+td +'</tr>';
+						}
+						
+					}
+					
+					
+					document.getElementById('getschedule').innerHTML = tr;
+				},
+				error : function(e) {
+					console.log("ERROR: ", e);
+					
+				},
+				done : function(e) {
+					console.log("DONE");
+				}
+			});
+		 $(".detail").click(function() {
+		
+			var tr ='<tr>';
+			var td ='';
+			var date1;
+			var date2;
+			var arr = $(this).attr('value').split('->');
+			
+			
+			date1=arr[0].replace(/\s+$/, '');
+			for(var i=0;i<full.length;i++){
+				
+				for(var j=0;j<full[i].length;j++){
+					
+					
+				
+					
+					if(date1==full[i][j]["date"]&&arr[1]==full[i][j]["destination"]){
+						
+						for(var d=0;d<full[i][j]["pass"].length;d++){
+							td ='<td>' + full[i][j]["pass"][d]["full_name"] + '</td>'
+							+ '<td>' + full[i][j]["pass"][d]["batch"] + '</td>'
+							+ '<td>' + full[i][j]["pass"][d]["role"] + '</td>'
+							+ '<td>' + full[i][j]["pass"][d]["email"] + '</td>'
+							+ '<td>' + full[i][j]["pass"][d]["phone"] + '</td>'
+							
+							tr = tr + td + '</tr>';
+							
+						}
+						
+					}
+						
+					
+				}
+			}
+			
+			document.getElementById('detail_pass').innerHTML = tr;
+			
+		 });
+	
+	
+});
+
+
+</script>
 </html>

@@ -23,6 +23,7 @@ import com.DaoClasses.TeacherDao;
 import com.DaoClasses.Teacher_Implement;
 import com.EntityClasses.Authentic;
 import com.EntityClasses.Destination_Master;
+import com.EntityClasses.Passenger;
 import com.ModelClasses.Teacher;
 import com.ServiceClasses.usersService;
 
@@ -41,26 +42,38 @@ public class ControllerFile1{
 		
 	}
 
-	@RequestMapping(value="/bookingPage",method = RequestMethod.GET)
-		public @ResponseBody ArrayList<Map> bookingPage(){
+	@RequestMapping(value="/schedule",method = RequestMethod.GET)
+		public @ResponseBody List<Map<String,Object>> bookingPage(){
 			
-			List<Destination_Master> destlist = new ArrayList<Destination_Master>();
+			List<List<Passenger>> destlist = new ArrayList<List<Passenger>>();
 			Admin_Imp dest = new Admin_Imp();
-			destlist = dest.Booking_API();
-			Map <String,Object> join = new HashMap<String,Object>();
-			ArrayList<Map> bookingapi=new ArrayList<Map>();  
-		
+			destlist = dest.Schedule();
+			
+			List<Map<String,Object>> schedule=new ArrayList<Map<String,Object>>();  
+			
 			for(int i=0;i<destlist.size();i++){
-				Map <String,Object> pass = new HashMap<String,Object>();
-				join.put("id",destlist.get(i).getDestination_id());
-				join.put("name", destlist.get(i).getDestination_name());
-				join.put("departure", destlist.get(i).getDeparture_time());
-				//pass.put("pass", destlist.get(i).getPassenger().);
 				
-				bookingapi.add(join);
+				Map <String,Object> date = new HashMap<String,Object>();
+				List<Map<String,Object>> listDate=new ArrayList<Map<String,Object>>(); 
+				for(int j=0;j<destlist.get(i).size();j++){
+					Map <String,Object> data = new HashMap<String,Object>();
+					data.put("destination",destlist.get(i).get(j).getDestination_id().getDestination_name());
+					data.put("role",destlist.get(i).get(j).getUser_id().getRole_id().getRole_name());
+					data.put("batch",destlist.get(i).get(j).getUser_id().getBatch_id().getBatch_number());
+					data.put("full_name",destlist.get(i).get(j).getUser_id().getFullname());
+					data.put("email",destlist.get(i).get(j).getUser_id().getEmail());
+					data.put("phone",destlist.get(i).get(j).getUser_id().getPhone_number());
+					listDate.add(data);
+					System.out.println(listDate);
+				}
+				
+				date.put(destlist.get(i).get(0).getDate_of_travel(), listDate);
+				System.out.println(date);
+				
+				schedule.add(date);
 				
 			}
-			return bookingapi;
+			return schedule;
 		}
 	
 	

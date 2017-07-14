@@ -20,12 +20,12 @@
             <column name="bus_image" not-null="true" />
         </property>
         
-        <set name="passenger" table="passenger"
+        <set name="bus_per_schedule" table="bus_per_schedule"
 				inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="bus_id"/>
             </key>
-            <one-to-many class="com.EntityClasses.Passenger" />
+            <one-to-many class="com.EntityClasses.Bus_Per_Schedule" />
         </set>
  	</class>
 </hibernate-mapping>

@@ -8,7 +8,8 @@ public class Passenger {
 	private String date_of_travel;
 	private String seat_number;
 	private String ticket_qrcode;
-	private Bus_Master bus_id;
+	private Bus_Per_Schedule bus_per_schedule_id;
+	
 	
 	
 	
@@ -54,12 +55,13 @@ public class Passenger {
 	public void setTicket_qrcode(String ticket_qrcode) {
 		this.ticket_qrcode = ticket_qrcode;
 	}
-	public Bus_Master getBus_id() {
-		return bus_id;
-	}
-	public void setBus_id(Bus_Master bus_id) {
-		this.bus_id = bus_id;
-	}
 	
+
+	public Bus_Per_Schedule getBus_per_schedule_id() {
+		return bus_per_schedule_id;
+	}
+	public void setBus_per_schedule_id(Bus_Per_Schedule bus_per_schedule_id) {
+		this.bus_per_schedule_id = bus_per_schedule_id;
+	}
 
 }

@@ -6,8 +6,8 @@
  	 	
  	 	
  	 	<!-- id -->
-	 	 <id name= "id" type="java.lang.Integer">
-            <column name="id" />
+	 	 <id name= "bus_per_schedule_id" type="string">
+            <column name="bus_per_schedule_id" />
             <generator class="identity" />
         </id>
 	     
@@ -16,13 +16,13 @@
         <many-to-one name="schedule_id" class="com.EntityClasses.Schedule_Table" fetch="select">
             <column name="schedule_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="user_id" class="com.EntityClasses.User_Master" fetch="select">
-            <column name="user_id" not-null="true" />
-        </many-to-one>
+      
         <many-to-one name="bus_id" class="com.EntityClasses.Bus_Master" fetch="select">
             <column name="bus_id" not-null="true" />
         </many-to-one>
-	     
+	    <many-to-one name="user_id" class="com.EntityClasses.User_Master" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
 	     
 	     
 	     <!-- entity -->
@@ -36,6 +36,13 @@
             <column name="est_arrival_time" not-null="true" />
         </property>
       
+      	<set name="passenger" table="passenger_table"
+				inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="bus_per_schedule_id" />
+            </key>
+            <one-to-many class="com.EntityClasses.Passenger" />
+        </set>
  
  	</class>
 </hibernate-mapping>

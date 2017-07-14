@@ -59,15 +59,15 @@
             </key>
             <one-to-many class="com.EntityClasses.Ticket_Donation" />
         </set>
-        
-        <set name="bus_per_schedule" table="bus_per_schedule"
+         <set name="bus_per_schedule" table="bus_per_schedule"
 				inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="user_id" not-null="true" />
             </key>
             <one-to-many class="com.EntityClasses.Bus_Per_Schedule" />
         </set>
- 	 	
+        
+       
  	 	
  	</class>
 </hibernate-mapping>

@@ -1,8 +1,10 @@
 package com.EntityClasses;
 
+import java.util.Set;
+
 public class Bus_Per_Schedule {
 
-	private int id;
+	private String bus_per_schedule_id;
 	private Schedule_Table schedule_id;
 	private User_Master user_id;
 	private Bus_Master bus_id;
@@ -10,14 +12,14 @@ public class Bus_Per_Schedule {
 	private String est_departure_time;
 	private String est_arrival_time;
 	
+	private Set<Passenger> passenger;
 	
 	
-	
-	public int getId() {
-		return id;
+	public String getBus_per_schedule_id() {
+		return bus_per_schedule_id;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setBus_per_schedule_id(String bus_per_schedule_id) {
+		this.bus_per_schedule_id = bus_per_schedule_id;
 	}
 	public Schedule_Table getSchedule_id() {
 		return schedule_id;
@@ -55,6 +57,11 @@ public class Bus_Per_Schedule {
 	public void setEst_arrival_time(String est_arrival_time) {
 		this.est_arrival_time = est_arrival_time;
 	}
-	
+	public Set<Passenger> getPassenger() {
+		return passenger;
+	}
+	public void setPassenger(Set<Passenger> passenger) {
+		this.passenger = passenger;
+	}
 	
 }

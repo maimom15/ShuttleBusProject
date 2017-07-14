@@ -1,6 +1,6 @@
 package com.EntityClasses;
 
-import java.util.HashSet;
+
 import java.util.Set;
 
 public class Bus_Master {
@@ -13,7 +13,7 @@ public class Bus_Master {
 	
 	private String bus_image;
 	
-	private Set<Passenger> passenger;
+	private Set<Bus_Per_Schedule> bus_per_schedule;
 	
 	public String getBus_id() {
 		return bus_id;
@@ -29,14 +29,6 @@ public class Bus_Master {
 		this.plate_number = plate_number;
 	}
 	
-	
-
-	public Set<Passenger> getPassenger() {
-		return passenger;
-	}
-	public void setPassenger(Set<Passenger> passenger) {
-		this.passenger = passenger;
-	}
 	public String getBus_model() {
 		return bus_model;
 	}
@@ -55,5 +47,12 @@ public class Bus_Master {
 	}
 	public void setBus_image(String bus_image) {
 		this.bus_image = bus_image;
+	}
+
+	public Set<Bus_Per_Schedule> getBus_per_schedule() {
+		return bus_per_schedule;
+	}
+	public void setBus_per_schedule(Set<Bus_Per_Schedule> bus_per_schedule) {
+		this.bus_per_schedule = bus_per_schedule;
 	}
 }
