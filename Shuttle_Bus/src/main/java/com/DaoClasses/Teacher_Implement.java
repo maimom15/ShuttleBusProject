@@ -1,13 +1,14 @@
 package com.DaoClasses;
 
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Query;
@@ -15,17 +16,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-
-
-
-
-
-
-
-
-
-
 
 import com.EntityClasses.Destination_Master;
 import com.EntityClasses.Passenger;
@@ -54,10 +44,8 @@ public class Teacher_Implement {
         }
         return user;
 	}
-	
-	
-	public List<Destination_Master> getDestinationId(){
 		
+	public List<Destination_Master> getDestinationId(){	
 		List<Destination_Master> dest = new ArrayList<Destination_Master>();
 		Transaction trns = null;
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -75,29 +63,27 @@ public class Teacher_Implement {
         }
         return dest;
 	}
-	
-	
-	
+		
 	public List<Schedule_Table> getSchdule(){
+		System.out.println("Schedule2");
 		List<Schedule_Table> sche = new ArrayList<Schedule_Table>();
 		Transaction trns = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
      	try {
             trns = session.beginTransaction();
-            String hql ="FROM Schedule_Table   ";
+            String hql ="FROM Schedule_Table as e where e.date_of_travel< current_date()";
             Query query =  session.createQuery(hql);
             sche = query.list();
-        } catch (RuntimeException e) {
+            System.out.println(sche.get(0).getDate_of_travel());
+     	}catch (RuntimeException e) {
+            if (trns != null) {
+                trns.rollback();
+            }
             e.printStackTrace();
-            return sche;
-        } finally {
-            session.flush();
-            session.close();
-        }
+     	}
         return sche;
 	}
-	
-	
+		
 	public List<Passenger> getPassenger(){
 		List<Passenger> passen = new ArrayList<Passenger>();
 		Transaction trns = null;
@@ -117,40 +103,49 @@ public class Teacher_Implement {
         return passen;
 	}
 	
-	public Boolean BookService(Teacher passen){
-		System.out.println("TeacherImp");
+	public Boolean BookService(Teacher[] passen){
 		Boolean confirm=false;
 		Transaction trns = null;
-        User_Master user=new User_Master("t4jrtfh385");        
-        Destination_Master dest = new Destination_Master(passen.getDestination_id());     
-        Passenger passenger = new Passenger();
-        passenger.setDate_of_travel(passen.getDate_of_travel());
-        passenger.setDate_of_booking(passen.getDate_of_booking()); 
-        passenger.setDestination_id(dest);
-	    passenger.setUser_id(user);	    
-	    Set<Passenger> ps = new HashSet<Passenger>();
-	    ps.add(passenger);
+        User_Master user=new User_Master("t4jrtfh385");   
+        Destination_Master destTo=new Destination_Master(passen[0].getDestination_id());
+        System.out.println("TeacherImp"+passen.length);
+        Destination_Master destBack = null;
+        Passenger passengerBack = null;
+        Passenger passengerTo = new Passenger(passen[0].getDate_of_booking(),user,destTo,passen[0].getDate_of_travel());
+        Set<Passenger> ps = new HashSet<Passenger>(); 
+       if(passen.length==1){
+    	    ps.add(passengerTo);
+        }
+       else{
+    	   destBack=new Destination_Master(passen[1].getDestination_id());
+           passengerBack = new Passenger(passen[0].getDate_of_booking(),user,destTo,passen[0].getDate_of_travel());
+    	   ps.add(passengerTo);
+   	       ps.add(passengerBack);
+       }
 	    user.setPassenger(ps);
-	    dest.setPassenger(ps);
+	    destTo.setPassenger(ps);
 	    Configuration con=new Configuration();
         con.configure("hibernate.cfg.xml");
      	SessionFactory sf=con.buildSessionFactory();
      	Session session=sf.openSession();
         try {
             trns = session.beginTransaction();
-            session.save(passenger);
+            session.save(passengerTo);
+            if(passen.length==2){
+            	destBack.setPassenger(ps);
+            	session.save(passengerBack);
+            }
             session.getTransaction().commit();
-            confirm = true;
         } catch (RuntimeException e) {
             if (trns != null) {
                 trns.rollback();
             }
             e.printStackTrace();
-            return confirm;
+            
         } finally {
-            //session.flush();
-            //session.close();
-        }
+           
+            session.close();
+        }      
         return confirm;
 	}
 
@@ -191,37 +186,22 @@ public class Teacher_Implement {
         }
 	
     }*/
-	public static void main(String arg[]){
+	public static void main(String arg[]) throws ParseException{		
+		List<Schedule_Table> sche = new ArrayList<Schedule_Table>();
 		Transaction trns = null;
-        User_Master user=new User_Master("t4jrtfh385");        
-        Destination_Master dest = new Destination_Master("756fh4hfyo");     
-        Passenger passenger = new Passenger();
-        passenger.setDate_of_travel("2017-05-18 13:17:17");
-        passenger.setDate_of_booking("2017-05-18 13:17:17"); 
-        passenger.setDestination_id(dest);
-	    passenger.setUser_id(user);	    
-	    Set<Passenger> ps = new HashSet<Passenger>(); 
-	    ps.add(passenger);
-	    user.setPassenger(ps);
-	    dest.setPassenger(ps);
-	    Configuration con=new Configuration();
-        con.configure("hibernate.cfg.xml");
-     	SessionFactory sf=con.buildSessionFactory();
-     	Session session=sf.openSession();
-        try {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+     	try {
             trns = session.beginTransaction();
-            session.save(passenger);
-            session.getTransaction().commit();
-        } catch (RuntimeException e) {
+            String hql ="FROM Schedule_Table as e where e.date_of_travel< current_date()";
+            Query query =  session.createQuery(hql);
+            sche = query.list();
+            System.out.println(sche.get(0).getDate_of_travel());
+     	}catch (RuntimeException e) {
             if (trns != null) {
                 trns.rollback();
             }
             e.printStackTrace();
-            
-        } finally {
-           
-            //session.close();
-        }
+     	}
 	}
 
 	

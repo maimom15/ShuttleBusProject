@@ -10,6 +10,16 @@ public class Passenger {
 	private String ticket_qrcode;
 	private Bus_Master bus_id;
 	
+	public Passenger(){
+		
+	}
+	
+	public Passenger(String date_of_booking,User_Master user_id,Destination_Master destination_id,String date_of_travel){
+		this.date_of_booking=date_of_booking;
+		this.user_id=user_id;
+		this.destination_id=destination_id;
+		this.date_of_travel=date_of_travel;
+	}
 	
 	
 	public int getId() {

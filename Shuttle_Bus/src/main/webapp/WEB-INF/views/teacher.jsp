@@ -194,9 +194,7 @@
         <thead>
           <tr>
               <th>Date</th>
-              <th>Destination</th>
-              <th>Bus ID</th>
-              <th>Bus Driver</th>            
+              <th>Destination</th>         
               <th>Total Seats</th>
               <th>Customer</th>
               <th>Staff</th>
@@ -340,7 +338,7 @@
 				timeout : 100000,
 				success : function(data) {
 					destination=data;
-					var select='<select id="fromDes" class="validate"><option >From</option>'
+					var select='<select id="fromDes" class="validate"><option disabled selected>From</option>'
 					for(i=0;i<data.length;i++){
 						select +='<option value="'+data[i].destination_id+'">'+data[i].destination_name+'</option>';								
 						};
@@ -375,25 +373,24 @@
 		 });
    		 
    		 
-   	    //schedule data//not yet
-   		var scheduleForm=null;
+   	    //schedule data//nottype : "POST",
    		$.ajax({
    			type : "POST",
    			contentType : "application/json",
    			url : "scheduleData",
    			timeout : 100000,
    			success : function(data) {
+   				    console.log(data+"KK");
+   				    var scheduleForm=null;
 	   				for(i=0;i<data.length();i++){	
 		   				scheduleForm+='<tr><td>'+data.date_of_travel
-		   								+'</td><td>'+data.destination
-		   								+'</td><td>'+data.bus_id
-		   								+'</td><td>'+data.driverName
-		   								+'</td><td>'+data.totalSeat
-		   								+'</td><td>'+data.Custom
-		   								+'</td><td>'+data.staff
-		   								+'</td><td>'+data.student
-		   								+'</td><td>'+data.remainingSeat
-		   								+'</td><td><a href="'+schedule_id
+		   								+'</td><td>'+data.destination_id
+		   								+'</td><td>'+data.total_available_seats
+		   								+'</td><td>'+data.customer_seats
+		   								+'</td><td>'+data.staff_seats
+		   								+'</td><td>'+data.student_seats
+		   								+'</td><td>'+data.remaining_seats
+		   								+'</td><td><a href="#" id="'+data.schedule_id
 		   						        +'">detail</a></td></tr>';	
 	   					}
 	   					document.getElementById('getSchedule').innerHTML=scheduleForm;
@@ -408,7 +405,6 @@
    		
    		
    	   //Passenger Detail//not yet
-   		var scheduleForm=null;
    		$.ajax({
    					type : "POST",
    					contentType : "application/json",
@@ -462,30 +458,35 @@
 	   		 	console.log(date_of_travel);	
 	   		} 		
 	   		else{
-	   		 	date_of_travel = $('#check_in_date').val();
+	   		 	date_of_travel[0] = $('#check_in_date').val();
 	   		 	console.log(date_of_travel)	
 	   		}  
 			}); 
 			
 		 //Booking Select
 		 $('#book_now').click(function(){
+			 if(to!=null&&from!=null&&date_of_travel.length!=0){
 			 var date_of_booking =new Date($.now());
 			 var destination_id=[to,from];
 			 submit = [];
-	      	 for(var i=0;i<itera_date_travel;i++){
+	      	 for(var i=0;i<itera_date_travel;i++){	 
 	      		submit[i]={"destination_id":destination_id[i],
 	      				"date_of_travel":date_of_travel[i],
-	      				"date_of_booking":date_of_booking};
+	      				"date_of_booking":""+date_of_booking};
 	      		}
-	      	 console.log(submit)
+	      	 console.log(submit);
+			 }else{
+				 alert("Unvalid Data!");
+			 }
 	      	$.ajax({
 					type : "POST",
-					
-					url : "bookingService",
+					url : "booking",
+					contentType : "application/json",
 					data : JSON.stringify(submit),
 					timeout : 100000,
 					success : function(data) {
 						console.log(data);	
+						alert("Booking Done");
 					},
 					error : function(e) {
 						console.log("ERROR: ", e);

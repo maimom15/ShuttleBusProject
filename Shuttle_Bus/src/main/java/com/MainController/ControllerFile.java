@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,13 +124,28 @@ public class ControllerFile {
 	}
 	
 
-	@RequestMapping(value="/scheduleData",method = RequestMethod.GET)
-	public @ResponseBody List<Schedule_Table> getscheduleData(){
+	@RequestMapping(value="/scheduleData",method = RequestMethod.POST)
+	public @ResponseBody List<Map> getscheduleData(){
+		List<Map> scheReturn = new ArrayList<Map>();
+		System.out.println("Schedule1");
 		List<Schedule_Table> schedule = new ArrayList<Schedule_Table>();
 		Teacher_Implement sl= new Teacher_Implement();
-		System.out.println("user info");
-		schedule=sl.getSchdule();
-		return schedule;
+		schedule = sl.getSchdule();
+		System.out.println(schedule);
+		for(int i=0;i<schedule.size();i++){
+        	Map<String,Object> sch = new HashMap<String,Object>();
+        	sch.put("date_of_travel",schedule.get(i).getDate_of_travel());
+        	sch.put("destination_id",schedule.get(i).getDestination_id() );
+        	sch.put("total_available_seats",schedule.get(i).getTotal_available_seats());
+        	sch.put("customer_seats",schedule.get(i).getCustomer_seats());
+        	sch.put("staff_seats",schedule.get(i).getStaff_seats());
+        	sch.put("student_seats",schedule.get(i).getStudent_seats());
+        	sch.put("remaining_seats",schedule.get(i).getRemaining_seats());
+        	sch.put("schedule_id",schedule.get(i).getSchedule_id());
+        	scheReturn.add(sch);
+        }
+		System.out.println(scheReturn);
+		return scheReturn;
 	}
 	
 
@@ -143,15 +159,13 @@ public class ControllerFile {
 		}
 		
 	
-	@RequestMapping(value="/bookingService",method = RequestMethod.POST)
-	public @ResponseBody String getBooking(@RequestBody Teacher book[]){
+	@RequestMapping(value="/booking",method = RequestMethod.POST)
+	public @ResponseBody Boolean getBooking(@RequestBody Teacher[] book){
 			Teacher_Implement sl= new Teacher_Implement();
-			System.out.println(book[0].getDate_of_booking());
-			//sl.BookService(book[0]);
-			return "success";
+			System.out.println(book[0].getDate_of_booking()+" "+book[0].getDestination_id()+" "+book[0].getDate_of_travel());
+			sl.BookService(book);
+			return true;
 	}
-	
-	
 	
 	/*
 	@RequestMapping(value="/device",method = RequestMethod.GET)
